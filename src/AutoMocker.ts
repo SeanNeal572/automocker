@@ -1,18 +1,25 @@
-import { JestFrameworkAdapter, JestMockingFramework, MockingFrameworkAdapter, SinonFrameworkAdapter, SinonMockingFramework } from './models'
+import {
+  JestFrameworkAdapter,
+  JestMockingFramework,
+  MockedClassInstance,
+  MockingFrameworkAdapter,
+  SinonFrameworkAdapter,
+  SinonMockingFramework,
+} from './models'
 
 type Class<T> = new (...args: any[]) => T
 
 /** A utility allowing for hollow mock class instance creation. */
-export class AutoMocker<T> {
-  constructor(private mockingFrameworkAdapter: MockingFrameworkAdapter<T>) {}
+export class AutoMocker<T extends MockingFrameworkAdapter<'jest' | 'sinon'>> {
+  constructor(private mockingFrameworkAdapter: T) {}
 
   /** Creates a class instance of the input type, mocking all of its functions */
-  createMockInstance<K>(TheClass: Class<K>): Record<keyof K, T> & K {
-    const classInstance: Partial<Record<keyof K, T>> = {}
+  createMockInstance<K>(TheClass: Class<K>): MockedClassInstance<K, T> {
+    let classInstance: Partial<MockedClassInstance<K, T>> = {}
 
     let currentPrototype = TheClass.prototype
 
-    const allFunctionNames = new Set<string>()
+    const allFunctionNames = new Set<keyof K>()
 
     while (currentPrototype && currentPrototype !== Object.prototype) {
       Object.getOwnPropertyNames(currentPrototype)
@@ -24,16 +31,16 @@ export class AutoMocker<T> {
           }
         })
         .forEach((name) => {
-          allFunctionNames.add(name)
+          allFunctionNames.add(name as keyof K)
         })
 
       currentPrototype = Object.getPrototypeOf(currentPrototype)
     }
     allFunctionNames.forEach((functionName) => {
-      classInstance[functionName as keyof K] = this.mockingFrameworkAdapter.createMockFunction()
+      classInstance[functionName] = this.mockingFrameworkAdapter.createMockFunction() as MockedClassInstance<K, T>[keyof K]
     })
 
-    return classInstance as Record<keyof K, T> & K
+    return classInstance as MockedClassInstance<K, T>
   }
 
   static createJestMocker(jest: JestMockingFramework) {

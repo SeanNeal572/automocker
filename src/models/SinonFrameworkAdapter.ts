@@ -1,13 +1,14 @@
+import Sinon from 'sinon'
 import { MockingFrameworkAdapter } from './MockingFrameworkAdapter'
 
 export interface SinonMockingFramework {
-  stub: () => sinon.SinonStub<any[], any>
+  stub: Sinon.SinonStubStatic
 }
 
-export class SinonFrameworkAdapter implements MockingFrameworkAdapter<sinon.SinonStub<any[], any>> {
+export class SinonFrameworkAdapter implements MockingFrameworkAdapter<'sinon'> {
   constructor(private sinon: SinonMockingFramework) {}
 
-  createMockFunction(): sinon.SinonStub<any[], any> {
+  createMockFunction(): sinon.SinonStub {
     return this.sinon.stub()
   }
 }

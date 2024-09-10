@@ -1,13 +1,13 @@
 import { MockingFrameworkAdapter } from './MockingFrameworkAdapter'
 
 export interface JestMockingFramework {
-  fn: () => jest.Mock<any, any>
+  fn: () => jest.Mock
 }
 
-export class JestFrameworkAdapter implements MockingFrameworkAdapter<jest.Mock<any, any>> {
+export class JestFrameworkAdapter implements MockingFrameworkAdapter<'jest'> {
   constructor(private jest: JestMockingFramework) {}
 
-  createMockFunction(): jest.Mock<any, any> {
+  createMockFunction(): jest.Mock {
     return this.jest.fn()
   }
 }

@@ -1,8 +1,7 @@
-import Sinon from 'sinon'
 import { MockingFrameworkAdapter } from './MockingFrameworkAdapter'
 
 export interface SinonMockingFramework {
-  stub: Sinon.SinonStubStatic
+  stub: sinon.SinonStubStatic
 }
 
 export class SinonFrameworkAdapter implements MockingFrameworkAdapter<'sinon'> {

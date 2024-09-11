@@ -1,5 +1,5 @@
 export * from './MockingFrameworkAdapter'
 export * from './JestFrameworkAdapter'
 export * from './SinonFrameworkAdapter'
-export * from './MockedClassInstance'
-export * from './MockedFunction'
+export * from './MockClassInstance'
+export * from './MockFunction'

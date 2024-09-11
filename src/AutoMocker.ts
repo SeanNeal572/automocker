@@ -1,7 +1,7 @@
 import {
   JestFrameworkAdapter,
   JestMockingFramework,
-  MockedClassInstance,
+  MockClassInstance,
   MockingFrameworkAdapter,
   SinonFrameworkAdapter,
   SinonMockingFramework,
@@ -10,12 +10,12 @@ import {
 type Class<T> = new (...args: any[]) => T
 
 /** A utility allowing for hollow mock class instance creation. */
-export class AutoMocker<T extends MockingFrameworkAdapter<'jest' | 'sinon'>> {
-  constructor(private mockingFrameworkAdapter: T) {}
+export class AutoMocker<T extends 'jest' | 'sinon'> {
+  constructor(private mockingFrameworkAdapter: MockingFrameworkAdapter<T>) {}
 
   /** Creates a class instance of the input type, mocking all of its functions */
-  createMockInstance<K>(TheClass: Class<K>): MockedClassInstance<K, T> {
-    let classInstance: Partial<MockedClassInstance<K, T>> = {}
+  createMockInstance<K>(TheClass: Class<K>): MockClassInstance<K, T> {
+    let classInstance: Partial<MockClassInstance<K, T>> = {}
 
     let currentPrototype = TheClass.prototype
 
@@ -37,17 +37,17 @@ export class AutoMocker<T extends MockingFrameworkAdapter<'jest' | 'sinon'>> {
       currentPrototype = Object.getPrototypeOf(currentPrototype)
     }
     allFunctionNames.forEach((functionName) => {
-      classInstance[functionName] = this.mockingFrameworkAdapter.createMockFunction() as MockedClassInstance<K, T>[keyof K]
+      classInstance[functionName] = this.mockingFrameworkAdapter.createMockFunction() as MockClassInstance<K, T>[keyof K]
     })
 
-    return classInstance as MockedClassInstance<K, T>
+    return classInstance as MockClassInstance<K, T>
   }
 
-  static createJestMocker(jest: JestMockingFramework) {
+  static createJestMocker(jest: JestMockingFramework): AutoMocker<'jest'> {
     return new AutoMocker(new JestFrameworkAdapter(jest))
   }
 
-  static createSinonMocker(sinon: SinonMockingFramework) {
+  static createSinonMocker(sinon: SinonMockingFramework): AutoMocker<'sinon'> {
     return new AutoMocker(new SinonFrameworkAdapter(sinon))
   }
 }

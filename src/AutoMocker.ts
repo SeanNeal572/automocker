@@ -1,13 +1,10 @@
-import {
-  JestFrameworkAdapter,
-  JestMockingFramework,
-  MockClassInstance,
-  MockingFrameworkAdapter,
-  SinonFrameworkAdapter,
-  SinonMockingFramework,
-} from './models'
+import { JestFrameworkAdapter, JestMockingFramework, MockingFrameworkAdapter, SinonFrameworkAdapter, SinonMockingFramework } from './models'
 
 type Class<T> = new (...args: any[]) => T
+
+type MockClassInstance<TClass, TFramework extends 'jest' | 'sinon'> = TFramework extends 'jest'
+  ? jest.Mocked<TClass>
+  : sinon.SinonStubbedInstance<TClass>
 
 /** A utility allowing for hollow mock class instance creation. */
 export class AutoMocker<T extends 'jest' | 'sinon'> {

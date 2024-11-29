@@ -7,7 +7,7 @@ export interface SinonMockingFramework {
 export class SinonFrameworkAdapter implements MockingFrameworkAdapter<'sinon'> {
   constructor(private sinon: SinonMockingFramework) {}
 
-  createMockFunction(): sinon.SinonStub {
+  createMockFunction() {
     return this.sinon.stub()
   }
 }

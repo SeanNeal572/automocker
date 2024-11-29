@@ -7,7 +7,7 @@ export interface JestMockingFramework {
 export class JestFrameworkAdapter implements MockingFrameworkAdapter<'jest'> {
   constructor(private jest: JestMockingFramework) {}
 
-  createMockFunction(): jest.Mock {
+  createMockFunction() {
     return this.jest.fn()
   }
 }
